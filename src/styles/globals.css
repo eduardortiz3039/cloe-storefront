@@ -1,4 +1,7 @@
-/* ── FUENTES ─────────────────────────────────────────────────────── */
+/* ── GOOGLE FONTS — debe ir PRIMERO ─────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap');
+
+/* ── FUENTES LOCALES ─────────────────────────────────────────────── */
 @font-face {
   font-family: 'Avian';
   src: url('/Avian.otf') format('opentype');
@@ -13,7 +16,6 @@
   font-style: normal;
   font-display: swap;
 }
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap');
 
 /* ── TOKENS MODO CLARO ───────────────────────────────────────────── */
 :root {
@@ -37,7 +39,6 @@
   --radius-sm:  2px;
   --radius-md:  4px;
   --radius-lg:  8px;
-  --ease-out:   cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ── TOKENS MODO OSCURO ──────────────────────────────────────────── */
@@ -64,9 +65,7 @@
   padding: 0;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-sans);
@@ -78,45 +77,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-img {
-  max-width: 100%;
-  display: block;
-}
-
-button {
-  font-family: inherit;
-  cursor: pointer;
-}
+a    { text-decoration: none; color: inherit; }
+img  { max-width: 100%; display: block; }
+button { font-family: inherit; cursor: pointer; }
 
 /* ── SCROLLBAR ───────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar       { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-/* ── UTILIDADES ──────────────────────────────────────────────────── */
-.eyebrow {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--tan);
-  margin-bottom: 10px;
-}
-
-.serif {
-  font-family: var(--font-serif);
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}

@@ -167,7 +167,8 @@ function MegaMenuPanel({ item }) {
   };
 
   return (
-    <div style={{ position:"fixed", left:0, right:0, top:"var(--nav-h,64px)",
+    <div style={{ position:"absolute", left:0, right:0,
+      top:"100%",
       background:"var(--bg)", borderTop:"2px solid var(--tan)", borderBottom:"1px solid var(--border)",
       boxShadow:"0 20px 48px rgba(0,0,0,.1)", zIndex:200,
       animation:"menuIn .2s ease", transition:"background .35s" }}>
@@ -378,7 +379,7 @@ export default function Navbar() {
       <nav onMouseLeave={() => setActiveId(null)}
         style={{ background:"var(--bg)", borderBottom:"1px solid var(--border)",
           display:"flex", alignItems:"center", padding:"0 48px",
-          height:"var(--nav-h,64px)", position:"sticky", top:0, zIndex:300,
+          height:"var(--nav-h,64px)", position:"sticky", top:0, zIndex:300, overflow:"visible",
           transition:"background .35s, border-color .35s" }}>
 
         {/* Logo */}
@@ -405,10 +406,13 @@ export default function Navbar() {
                   transform: activeId===item.id ? "scaleX(1)" : "scaleX(0)",
                   transition:"transform .25s ease" }}/>
               </a>
-              {activeId === item.id && <MegaMenuPanel item={item}/>}
+              
             </li>
           ))}
         </ul>
+
+        {/* Mega menú — anclado al nav */}
+        {activeId && <MegaMenuPanel item={NAV_DATA.find(i => i.id === activeId)}/>}
 
         {/* Desktop icons */}
         <div style={{ display:"flex", gap:12, alignItems:"center", marginLeft:"auto", flexShrink:0 }} className="nav-icons-d">
