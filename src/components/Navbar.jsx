@@ -18,66 +18,85 @@ const AnnouncementBar = () => (
   </div>
 );
 
-// ─── NAV DATA — 8 categorías según diagrama ─────────────────────────
+// ─── NAV DATA — 8 categorías ─────────────────────────────────────────
 const NAV_DATA = [
   {
     id:"new-arrivals", label:"New Arrivals",
-    mega:{ cols:"220px 1fr 200px", items:[
-      { type:"links", title:"Categorías", links:["Bolsos","Billeteras","Calzado","Equipaje"] },
-      { type:"featured", img:"https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80", tag:"Recién llegado", title:"Spring 2026" },
+    mega:{ cols:"1fr 1fr 1fr 1fr 1fr", items:[
+      { type:"links", title:"Lo nuevo", links:["Recién llegado","Más vendidos","Ediciones limitadas","Colaboraciones","Preventa","Outlet"] },
+      { type:"links", title:"Por categoría", links:["Bolsas nuevas","Calzado nuevo","Equipaje nuevo","Accesorios nuevos","Para él","Para niñas"] },
+      { type:"featured", img:"https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80", tag:"Spring 2026", title:"Nueva colección" },
+      { type:"featured", img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500&q=80", tag:"Más vendida", title:"Tote Grande Camel" },
+      { type:"featured", img:"https://images.unsplash.com/photo-1559563458-527698bf5295?w=500&q=80", tag:"Tendencia", title:"Bolsa Drawstring" },
     ]},
   },
   {
     id:"bolsa", label:"Bolsa",
-    mega:{ cols:"1fr 1fr 200px", items:[
+    mega:{ cols:"1fr 1fr 1fr 1fr 1fr", items:[
       { type:"grouped", groups:[
-        { title:null, links:["Nueva colección","Colaboraciones"] },
+        { title:"Colecciones", links:["Nueva colección","Always On","Ultra Ligera","Colaboraciones","Ediciones limitadas"] },
+        { title:"Tendencias", links:["Denim","Jacquard","Suede","Trenzado","Metalizado"] },
+      ]},
+      { type:"grouped", groups:[
         { title:"Tipos de bolsa", subgroups:[
-          { label:"Funcional", links:["Mochilas","Porta laptops","Pañaleras"] },
-          { label:"Girls",     links:["Bolsas","Mochilas","Lonchera","Portalápiz"] },
-          { label:"Tendencias",links:["Denim","Jacquard","Suede"] },
+          { label:"Funcional",  links:["Mochilas","Porta laptops","Pañaleras","Tote grande","Hobo estructurada"] },
+          { label:"Compactas",  links:["Crossbody","Clutch","Mini bag","Satchel"] },
+          { label:"Girls",      links:["Bolsas niña","Mochilas niña","Lonchera","Portalápiz"] },
         ]},
       ]},
       { type:"featured", img:"https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=500&q=80", tag:"Más vendida", title:"Tote Grande" },
+      { type:"featured", img:"https://images.unsplash.com/photo-1559563458-527698bf5295?w=500&q=80", tag:"Nueva entrada", title:"Bolsa Drawstring" },
+      { type:"featured", img:"https://images.unsplash.com/photo-1612817288484-6f916006741a?w=500&q=80", tag:"Mini", title:"Crossbody Mini" },
     ]},
   },
   {
     id:"calzado", label:"Calzado",
-    mega:{ cols:"220px 1fr 200px", items:[
-      { type:"links", title:"Categorías", links:["Botas y botines","Zapatillas","Flats","Sneakers","Sandalias","Tallas únicas"] },
+    mega:{ cols:"1fr 1fr 1fr 1fr 1fr", items:[
+      { type:"links", title:"Estilo", links:["Flats — zapato plano","Tacones bajos","Tacones altos","Sandalias","Botines","Sneakers","Zapatillas","Loafers"] },
+      { type:"links", title:"Ocasión", links:["Casual — día a día","Trabajo & oficina","Fiesta & noche","Playa & verano","Lluvia","Tallas únicas"] },
       { type:"featured", img:"https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&q=80", tag:"Spring 2026", title:"Colección primavera" },
+      { type:"featured", img:"https://images.unsplash.com/photo-1518894781321-630e638d0742?w=500&q=80", tag:"Tendencia", title:"Sneakers & Flats" },
+      { type:"featured", img:"https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=500&q=80", tag:"Fiesta", title:"Tacones de noche" },
     ]},
   },
   {
     id:"equipaje", label:"Equipaje",
-    mega:{ cols:"1fr 1fr 200px", items:[
-      { type:"links", title:"Maletas", links:["Carry On","Check-in","Backpacks","Set de maletas","Duffle bags"] },
+    mega:{ cols:"1fr 1fr 1fr 1fr 1fr", items:[
+      { type:"links", title:"Maletas", links:["Carry On — cabina 20\"","Check-in — 24\"","Grande 28\"","Set de maletas","Duffle bags","Backpacks de viaje","Porta trajes"] },
       { type:"grouped", groups:[
         { title:"Por tipo de viaje", subgroups:[
-          { label:null, links:["Viaje Corto","Viaje Largo","Viaje de negocios","Aventura"] },
+          { label:null, links:["Viaje corto — fin de semana","Viaje largo — +7 días","Viaje de negocios","Aventura & outdoor","Luna de miel"] },
         ]},
+        { title:"Accesorios de viaje", links:["Organizadores","Porta documentos","Candados","Fundas para maleta"] },
       ]},
       { type:"featured", img:"https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=500&q=80", tag:"Nuevas", title:"Maletas rígidas 2026" },
+      { type:"featured", img:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80", tag:"Bestseller", title:"Set de maletas" },
+      { type:"featured", img:"https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?w=500&q=80", tag:"Carry On", title:"Maleta de cabina" },
     ]},
   },
   {
     id:"caballeros", label:"Caballeros",
-    mega:{ cols:"220px 1fr 200px", items:[
-      { type:"links", title:"Categorías", links:["Carteras","Backpacks","Porta Laptops"] },
+    mega:{ cols:"1fr 1fr 1fr 1fr 1fr", items:[
+      { type:"links", title:"Bolsos & Maletines", links:["Carteras & billeteras","Backpacks","Porta laptops","Mochilas","Bolsos casuales","Maletines","Riñoneras"] },
+      { type:"links", title:"Accesorios", links:["Llaveros","Cinturones","Porta pasaporte","Organizadores","Tarjeteros","Set regalo","Lentes de sol"] },
       { type:"featured", img:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80", tag:"Para él", title:"Colección Caballeros" },
+      { type:"featured", img:"https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?w=500&q=80", tag:"Nueva entrada", title:"Backpacks urbanos" },
+      { type:"featured", img:"https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80", tag:"Accesorios", title:"Sets de regalo" },
     ]},
   },
   {
     id:"accesorios", label:"Accesorios",
-    mega:{ cols:"220px 1fr 200px", items:[
-      { type:"links", title:"Categorías", links:["Carteras","Relojes","Lentes","Cosmetiqueras"] },
-      { type:"featured", img:"https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=500&q=80", tag:"Personaliza tu look", title:"Accesorios" },
+    mega:{ cols:"1fr 1fr 1fr 1fr 1fr", items:[
+      { type:"links", title:"Categorías", links:["Carteras & monederos","Relojes","Lentes de sol","Cosmetiqueras","Joyería","Pañoletas & bufandas","Cinturones","Paraguas"] },
+      { type:"links", title:"Especiales", links:["Sets de regalo","Gift Cards","Ediciones limitadas","Personalización — charms","Porta llaves","Porta pasaporte","Tarjeteros"] },
+      { type:"featured", img:"https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=500&q=80", tag:"Personaliza", title:"Charms & Llaveros" },
+      { type:"featured", img:"https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=500&q=80", tag:"Tendencia", title:"Cosmetiqueras & Estuches" },
+      { type:"featured", img:"https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=500&q=80", tag:"Nueva entrada", title:"Joyería fina" },
     ]},
   },
-  { id:"gift-card",  label:"Gift Card", href:"#/gift-card" },   // sin sub-menú
-  { id:"sale",       label:"SALE",      href:"#/sale", sale:true }, // sin sub-menú
+  { id:"gift-card", label:"Gift Card", href:"#/gift-card" },
+  { id:"sale",      label:"SALE",      href:"#/sale", sale:true },
 ];
-
 // ─── SEARCH DATA ─────────────────────────────────────────────────────
 const SEARCH_PRODUCTS = [
   {name:"Bolsa Tote Grande Camel",price:"$2,099"},{name:"Bolsa Hobo Maxi Azul",price:"$2,299"},
@@ -106,7 +125,7 @@ function MegaMenuPanel({ item }) {
 
   const renderItem = (it, i) => {
     if (it.type === "featured") return (
-      <div key={i} style={{ position:"relative", borderRadius:4, overflow:"hidden", aspectRatio:"3/4", maxHeight:260, background:"var(--bg2)" }}>
+      <div key={i} style={{ position:"relative", borderRadius:4, overflow:"hidden", width:"100%", background:"var(--bg2)", minHeight:180 }}>
         <img src={it.img} alt={it.title} style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
         <div style={{ position:"absolute", bottom:0, left:0, right:0, background:"linear-gradient(transparent,rgba(0,0,0,.65))", padding:"20px 14px 14px", color:"white" }}>
           <p style={{ fontSize:9, fontWeight:600, letterSpacing:2, textTransform:"uppercase", opacity:.8, marginBottom:3 }}>{it.tag}</p>
@@ -173,8 +192,8 @@ function MegaMenuPanel({ item }) {
       boxShadow:"0 20px 48px rgba(0,0,0,.1)", zIndex:200,
       animation:"menuIn .2s ease", transition:"background .35s" }}>
       <style>{`@keyframes menuIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}`}</style>
-      <div style={{ maxWidth:1100, margin:"0 auto", padding:"36px 48px 40px",
-        display:"grid", gridTemplateColumns: cols, gap:40, alignItems:"start" }}>
+      <div style={{ maxWidth:1400, margin:"0 auto", padding:"22px 48px 26px",
+        display:"grid", gridTemplateColumns: cols, gap:20, alignItems:"stretch" }}>
         {items.map(renderItem)}
       </div>
     </div>
