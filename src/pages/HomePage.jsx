@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense, Component } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { Environment, ContactShadows, useProgress } from "@react-three/drei";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
-import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -61,13 +60,19 @@ const SLIDES = [
   { label:"07 — Tuya",      title:"Disponible\nahora",              body:"Producción limitada. Cuando se agota la edición, se agota. Sin reposición garantizada." },
 ];
 
+// ─── ERROR BOUNDARY (evita pantalla blanca si el 3D falla) ───────────────────
+class ThreeErrorBoundary extends Component {
+  constructor(props) { super(props); this.state = { hasError: false }; }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) return null; // Oculta el 3D pero no rompe la página
+    return this.props.children;
+  }
+}
+
 // ─── 3D MODEL ────────────────────────────────────────────────────────────────
 function Model3D({ progressRef, mouseRef }) {
-  const materials = useLoader(MTLLoader, "/frames/Sitio_Suzanne.mtl");
-  const obj = useLoader(OBJLoader, "/frames/Sitio_Suzanne.obj", (loader) => {
-    materials.preload();
-    loader.setMaterials(materials);
-  });
+  const obj = useLoader(OBJLoader, "/frames/Sitio_Suzanne.obj");
   const groupRef  = useRef();
   const rotSmooth = useRef({ x:0, y:0 });
 
@@ -213,15 +218,17 @@ function ProductViewer3D() {
             {/* Canvas 3D */}
             <div style={{ flex:1, position:"relative", background:"var(--bg2)",
               borderRight:"0.5px solid var(--border)" }}>
-              <Canvas camera={{ position:[0,0,4], fov:45 }} shadows dpr={[1,2]}
-                style={{ width:"100%", height:"100%" }}>
-                <DynamicLights progressRef={progressRef}/>
-                <Suspense fallback={null}>
-                  <Model3D progressRef={progressRef} mouseRef={mouseRef}/>
-                  <ContactShadows position={[0,-1.4,0]} opacity={0.3} scale={4} blur={2} far={2}/>
-                  <Environment preset="studio"/>
-                </Suspense>
-              </Canvas>
+              <ThreeErrorBoundary>
+                <Canvas camera={{ position:[0,0,4], fov:45 }} shadows dpr={[1,2]}
+                  style={{ width:"100%", height:"100%" }}>
+                  <DynamicLights progressRef={progressRef}/>
+                  <Suspense fallback={null}>
+                    <Model3D progressRef={progressRef} mouseRef={mouseRef}/>
+                    <ContactShadows position={[0,-1.4,0]} opacity={0.3} scale={4} blur={2} far={2}/>
+                    <Environment preset="studio"/>
+                  </Suspense>
+                </Canvas>
+              </ThreeErrorBoundary>
               {!modelReady && <LoaderBar onReady={() => setModelReady(true)}/>}
               {modelReady && (
                 <span style={{ position:"absolute", top:14, left:"50%", transform:"translateX(-50%)",
