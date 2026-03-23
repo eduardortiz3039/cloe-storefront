@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef, Suspense, Component } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { Environment, ContactShadows, useProgress } from "@react-three/drei";
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
+import { Environment, ContactShadows, useProgress, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -60,40 +59,36 @@ const SLIDES = [
   { label:"07 — Tuya",      title:"Disponible\nahora",              body:"Producción limitada. Cuando se agota la edición, se agota. Sin reposición garantizada." },
 ];
 
-// ─── ERROR BOUNDARY (evita pantalla blanca si el 3D falla) ───────────────────
-class ThreeErrorBoundary extends Component {
-  constructor(props) { super(props); this.state = { hasError: false }; }
-  static getDerivedStateFromError() { return { hasError: true }; }
-  render() {
-    if (this.state.hasError) return null; // Oculta el 3D pero no rompe la página
-    return this.props.children;
-  }
-}
-
 // ─── 3D MODEL ────────────────────────────────────────────────────────────────
+// ─── RUTA DEL MODELO GLB ─────────────────────────────────────────────────────
+// ▼ Coloca tu archivo .glb en public/frames/ con este nombre exacto:
+const GLB_PATH = "/frames/modelo-cloe.glb";
+
 function Model3D({ progressRef, mouseRef }) {
-  const obj = useLoader(OBJLoader, "/frames/Sitio_Suzanne.obj");
+  const { scene } = useGLTF(GLB_PATH);
   const groupRef  = useRef();
   const rotSmooth = useRef({ x:0, y:0 });
+  const clonedScene = scene.clone(); // clonar para evitar mutaciones
 
   useEffect(() => {
-    if (!obj) return;
-    const box    = new THREE.Box3().setFromObject(obj);
+    // Centrar y escalar el modelo automáticamente
+    const box    = new THREE.Box3().setFromObject(clonedScene);
     const center = box.getCenter(new THREE.Vector3());
     const size   = box.getSize(new THREE.Vector3());
-    obj.position.sub(center);
-    obj.scale.setScalar(2.2 / Math.max(size.x, size.y, size.z));
-    obj.traverse((child) => {
+    clonedScene.position.sub(center);
+    clonedScene.scale.setScalar(2.2 / Math.max(size.x, size.y, size.z));
+
+    // Mejorar materiales manteniendo texturas originales del GLB
+    clonedScene.traverse((child) => {
       if (child.isMesh) {
-        const color = child.material?.color?.clone() ?? new THREE.Color(0xd4c5b0);
-        child.material = new THREE.MeshPhysicalMaterial({
-          color, metalness:0.15, roughness:0.4, clearcoat:0.6,
-          clearcoatRoughness:0.2, envMapIntensity:1.2,
-        });
-        child.castShadow = child.receiveShadow = true;
+        child.castShadow    = true;
+        child.receiveShadow = true;
+        if (child.material) {
+          child.material.envMapIntensity = 1.2;
+        }
       }
     });
-  }, [obj]);
+  }, [clonedScene]);
 
   useFrame(() => {
     if (!groupRef.current || !progressRef.current) return;
@@ -107,25 +102,13 @@ function Model3D({ progressRef, mouseRef }) {
     const zoom = 1 + 0.6 * Math.max(0, 1 - Math.abs(p - 0.5) / 0.5);
     groupRef.current.scale.setScalar(zoom);
     groupRef.current.position.y = Math.sin(p * Math.PI) * 0.2;
-    const palette = [
-      new THREE.Color("#c8bfb0"),
-      new THREE.Color("#e8c898"),
-      new THREE.Color("#c9a97a"),
-      new THREE.Color("#a07d50"),
-      new THREE.Color("#c8bfb0"),
-    ];
-    const step = 1 / (palette.length - 1);
-    const seg  = Math.min(Math.floor(p / step), palette.length - 2);
-    const t    = (p - seg * step) / step;
-    const blended = palette[seg].clone().lerp(palette[seg + 1], t);
-    groupRef.current.traverse((child) => {
-      if (child.isMesh && child.material?.color)
-        child.material.color.lerp(blended, 0.05);
-    });
   });
 
-  return <group ref={groupRef}><primitive object={obj}/></group>;
+  return <group ref={groupRef}><primitive object={clonedScene}/></group>;
 }
+
+// Precargar el GLB
+useGLTF.preload(GLB_PATH);
 
 function DynamicLights({ progressRef }) {
   const l1 = useRef(), l2 = useRef();
@@ -218,17 +201,15 @@ function ProductViewer3D() {
             {/* Canvas 3D */}
             <div style={{ flex:1, position:"relative", background:"var(--bg2)",
               borderRight:"0.5px solid var(--border)" }}>
-              <ThreeErrorBoundary>
-                <Canvas camera={{ position:[0,0,4], fov:45 }} shadows dpr={[1,2]}
-                  style={{ width:"100%", height:"100%" }}>
-                  <DynamicLights progressRef={progressRef}/>
-                  <Suspense fallback={null}>
-                    <Model3D progressRef={progressRef} mouseRef={mouseRef}/>
-                    <ContactShadows position={[0,-1.4,0]} opacity={0.3} scale={4} blur={2} far={2}/>
-                    <Environment preset="studio"/>
-                  </Suspense>
-                </Canvas>
-              </ThreeErrorBoundary>
+              <Canvas camera={{ position:[0,0,4], fov:45 }} shadows dpr={[1,2]}
+                style={{ width:"100%", height:"100%" }}>
+                <DynamicLights progressRef={progressRef}/>
+                <Suspense fallback={null}>
+                  <Model3D progressRef={progressRef} mouseRef={mouseRef}/>
+                  <ContactShadows position={[0,-1.4,0]} opacity={0.3} scale={4} blur={2} far={2}/>
+                  <Environment preset="studio"/>
+                </Suspense>
+              </Canvas>
               {!modelReady && <LoaderBar onReady={() => setModelReady(true)}/>}
               {modelReady && (
                 <span style={{ position:"absolute", top:14, left:"50%", transform:"translateX(-50%)",
