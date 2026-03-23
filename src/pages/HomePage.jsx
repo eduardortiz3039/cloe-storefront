@@ -59,55 +59,66 @@ const SLIDES = [
   { label:"07 — Tuya",      title:"Disponible\nahora",              body:"Producción limitada. Cuando se agota la edición, se agota. Sin reposición garantizada." },
 ];
 
-// ─── 3D MODEL ────────────────────────────────────────────────────────────────
 // ─── RUTA DEL MODELO GLB ─────────────────────────────────────────────────────
-// ▼ Coloca tu archivo .glb en public/frames/ con este nombre exacto:
 const GLB_PATH = "/frames/modelo-cloe.glb";
 
 function Model3D({ progressRef, mouseRef }) {
   const { scene } = useGLTF(GLB_PATH);
   const groupRef  = useRef();
-  const rotSmooth = useRef({ x:0, y:0 });
-  const clonedScene = scene.clone(); // clonar para evitar mutaciones
+  const rotSmooth = useRef({ x: 0, y: 0 });
+  // Clonar una sola vez con useMemo implícito via useRef
+  const clonedRef = useRef(null);
+  if (!clonedRef.current) clonedRef.current = scene.clone(true);
+  const cloned = clonedRef.current;
 
   useEffect(() => {
-    // Centrar y escalar el modelo automáticamente
-    const box    = new THREE.Box3().setFromObject(clonedScene);
+    const box    = new THREE.Box3().setFromObject(cloned);
     const center = box.getCenter(new THREE.Vector3());
     const size   = box.getSize(new THREE.Vector3());
-    clonedScene.position.sub(center);
-    clonedScene.scale.setScalar(2.2 / Math.max(size.x, size.y, size.z));
-
-    // Mejorar materiales manteniendo texturas originales del GLB
-    clonedScene.traverse((child) => {
+    cloned.position.sub(center);
+    cloned.scale.setScalar(2.0 / Math.max(size.x, size.y, size.z));
+    // Respetar texturas y materiales originales del GLB — solo mejorar envMap
+    cloned.traverse((child) => {
       if (child.isMesh) {
         child.castShadow    = true;
         child.receiveShadow = true;
         if (child.material) {
-          child.material.envMapIntensity = 1.2;
+          // NO reemplazar material — conservar texturas originales
+          child.material.needsUpdate    = true;
+          child.material.envMapIntensity = 1.4;
         }
       }
     });
-  }, [clonedScene]);
+  }, [cloned]);
 
   useFrame(() => {
     if (!groupRef.current || !progressRef.current) return;
-    const p  = progressRef.current.value;
+    const p  = progressRef.current.value;        // 0 → 1 con el scroll
     const mx = mouseRef?.current?.x ?? 0;
     const my = mouseRef?.current?.y ?? 0;
-    rotSmooth.current.x += (my * 0.6 - rotSmooth.current.x) * 0.08;
-    rotSmooth.current.y += (mx * 0.8 - rotSmooth.current.y) * 0.08;
-    groupRef.current.rotation.y = p * Math.PI * 2 + rotSmooth.current.y;
-    groupRef.current.rotation.x = p * (140 * Math.PI / 180) + rotSmooth.current.x;
-    const zoom = 1 + 0.6 * Math.max(0, 1 - Math.abs(p - 0.5) / 0.5);
-    groupRef.current.scale.setScalar(zoom);
-    groupRef.current.position.y = Math.sin(p * Math.PI) * 0.2;
+
+    // Suavizar rotación por mouse
+    rotSmooth.current.x += (my * 0.4 - rotSmooth.current.x) * 0.06;
+    rotSmooth.current.y += (mx * 0.5 - rotSmooth.current.y) * 0.06;
+
+    // ── Giro hacia la DERECHA con scroll (Y negativo = derecha en Three.js)
+    groupRef.current.rotation.y = -(p * Math.PI * 2) + rotSmooth.current.y;
+    // Ligera inclinación vertical con scroll
+    groupRef.current.rotation.x = p * 0.4 + rotSmooth.current.x;
+
+    // ── Acercamiento: empieza lejos, se acerca al centro del scroll, luego aleja
+    // curva en campana: máximo zoom al 50% del scroll
+    const zoomCurve = 1 - Math.pow((p - 0.5) * 2, 2); // 0→1→0
+    const scale = 0.85 + zoomCurve * 0.55;             // 0.85 → 1.4 → 0.85
+    groupRef.current.scale.setScalar(scale);
+
+    // Flotación suave vertical
+    groupRef.current.position.y = Math.sin(p * Math.PI) * 0.15;
   });
 
-  return <group ref={groupRef}><primitive object={clonedScene}/></group>;
+  return <group ref={groupRef}><primitive object={cloned}/></group>;
 }
 
-// Precargar el GLB
 useGLTF.preload(GLB_PATH);
 
 function DynamicLights({ progressRef }) {

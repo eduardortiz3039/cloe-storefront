@@ -16,38 +16,6 @@ function PageWrapper({ children }) {
   return <>{children}</>;
 }
 
-const DEMO_TABS = [
-  ["Inicio","#/"],
-  ["Catálogo","#/catalogo"],
-  ["Producto","#/producto"],
-  ["Carrito","#/carrito"],
-  ["Checkout","#/checkout"],
-  ["Login","#/login"],
-];
-
-function DemoNav() {
-  const { route } = useRoute();
-  return (
-    <nav style={{ position:"fixed", bottom:20, left:"50%", transform:"translateX(-50%)",
-      display:"flex", gap:6, background:"var(--bg)", border:"1px solid var(--border)",
-      borderRadius:24, padding:"6px 8px", boxShadow:"0 4px 24px rgba(0,0,0,.12)", zIndex:9999 }}>
-      {DEMO_TABS.map(([label, hash]) => {
-        const active = route === hash || (hash === "#/" && (route === "#/" || route === ""));
-        return (
-          <a key={hash} href={hash}
-            style={{ fontSize:11, fontWeight:600, letterSpacing:1.2, textTransform:"uppercase",
-              padding:"7px 14px", borderRadius:18, whiteSpace:"nowrap",
-              background: active ? "var(--text)" : "transparent",
-              color: active ? "var(--bg)" : "var(--text3)",
-              transition:"all .2s" }}>
-            {label}
-          </a>
-        );
-      })}
-    </nav>
-  );
-}
-
 function Router() {
   const { route } = useRoute();
   if (route === "#/catalogo" || route === "#/bolsas") return <CatalogPage/>;
@@ -65,7 +33,6 @@ export default function App() {
         <Navbar/>
         <PageWrapper><Router/></PageWrapper>
         <Footer/>
-        <DemoNav/>
       </CartProvider>
     </ThemeProvider>
   );
